@@ -1,26 +1,63 @@
-import axios from "axios";
 import { notFound, redirect } from "next/navigation";
 
 export async function getProductData(slug: string) {
   let product: any = {};
-  await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/${slug}`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
-    })
-    .then(function (response) {
-      product = response.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-      if (error.status === 404) {
-        notFound();
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/${slug}`, {
+      next: {
+        revalidate: 5
       }
-      return redirect("/server-error");
-    });
-
+    })
+    if (response.ok) {
+      product = await response.json()
+    } else if (response.status === 404) {
+      notFound()
+    } else {
+      product = {}
+    }
+  } catch (e: any) {
+    console.log(e)
+    return redirect("/server-error");
+  }
   return product;
+}
+
+export async function getProducts() {
+  let products: any = [];
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products`, {
+      next: {
+        revalidate: 5
+      }
+    })
+    if (response.ok) {
+      products = await response.json()
+    } else {
+      products = []
+    }
+  } catch (e: any) {
+    console.log(e)
+    return redirect("/server-error");
+  }
+  return products;
+}
+
+export async function getCategories() {
+  let categories: any = [];
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}product/categories`, {
+      next: {
+        revalidate: 5
+      }
+    })
+    if (response.ok) {
+      categories = await response.json()
+    } else {
+      categories = []
+    }
+  } catch (e: any) {
+    console.log(e)
+    return redirect("/server-error");
+  }
+  return categories;
 }

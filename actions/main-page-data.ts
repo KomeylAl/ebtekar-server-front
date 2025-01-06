@@ -1,93 +1,89 @@
 import axios from "axios";
+import { unstable_noStore } from "next/cache";
 
 export async function heroData() {
   let hero: any = {};
-  await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}hero`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}hero`, {
+      next: {
+        revalidate: 5
+      }
     })
-    .then(function (response) {
-      hero = response.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-
+    if (response.ok) {
+      hero = await response.json()
+    } else {
       hero = {
         company_name: "ماشین سازی ابتکار صنعت اسپادانا",
         description: "",
         logo_path: "",
       };
-    });
-
+    }
+  } catch (e: any) {
+    console.log(e)
+  }
   return hero;
 }
 
 export async function mainPagePostsData() {
-  let posts: any = [];
-  await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}main-page-posts`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
+  let posts: any;
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}main-page-posts`, {
+      next: {
+        revalidate: 5
+      }
     })
-    .then(function (response) {
-      posts = response.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    if (response.ok) {
+      posts = await response.json()
+    } else {
+      posts = []
+    }
+  } catch (e: any) {
+    console.log(e)
+  }
 
   return posts;
 }
 
 export async function mainPageProductsData() {
   let products: any;
-  await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}main-page-products`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}main-page-products`, {
+      next: {
+        revalidate: 5
+      }
     })
-    .then(function (response) {
-      products = response.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    if (response.ok) {
+      products = await response.json()
+    } else {
+      products = []
+    }
+  } catch (e: any) {
+    console.log(e)
+  }
 
   return products;
 }
 
 export async function mainPageAbout() {
   let about: any = {};
-  await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}info`, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}info`, {
+      next: {
+        revalidate: 5
+      }
     })
-    .then(function (response) {
-      about = response.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-
+    if (response.ok) {
+      about = await response.json()
+    } else {
       about = {
         company_name: "ماشین سازی ابتکار صنعت اسپادانا",
         description: "",
         logo_path: "",
       };
-    });
+    }
+  } catch (e: any) {
+    console.log(e)
+  }
 
   return about;
 }
