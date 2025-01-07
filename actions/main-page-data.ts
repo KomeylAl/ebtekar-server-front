@@ -1,6 +1,3 @@
-import axios from "axios";
-import { unstable_noStore } from "next/cache";
-
 export async function heroData() {
   let hero: any = {};
   try {

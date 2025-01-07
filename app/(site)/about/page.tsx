@@ -1,25 +1,12 @@
+import { mainPageAbout } from "@/actions/main-page-data";
 import AboutComp from "@/components/AboutComp";
 import Header from "@/components/Header";
 import axios from "axios";
 import { redirect } from "next/navigation";
 
 export default async function About() {
-
-  let info: any
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}info`)
-      .then(function (response) {
-        if (response.status === 200) {
-          info = response.data
-        }
-      })
-      .catch(function (error) {
-        if (error.status === 500) {
-          return redirect('/server-error')
-        }
-        return redirect('/server-error')
-      })
-      
+  
+  const info = await mainPageAbout();
 
   return (
     <div className="py-8">

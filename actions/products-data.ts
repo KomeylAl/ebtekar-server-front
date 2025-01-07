@@ -3,20 +3,23 @@ import { notFound, redirect } from "next/navigation";
 export async function getProductData(slug: string) {
   let product: any = {};
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/${slug}`, {
-      next: {
-        revalidate: 5
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/${slug}`,
+      {
+        next: {
+          revalidate: 5,
+        },
       }
-    })
+    );
     if (response.ok) {
-      product = await response.json()
+      product = await response.json();
     } else if (response.status === 404) {
-      notFound()
+      notFound();
     } else {
-      product = {}
+      product = {};
     }
   } catch (e: any) {
-    console.log(e)
+    console.log(e);
     return redirect("/server-error");
   }
   return product;
@@ -25,18 +28,21 @@ export async function getProductData(slug: string) {
 export async function getProducts() {
   let products: any = [];
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products`, {
-      next: {
-        revalidate: 5
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}products`,
+      {
+        next: {
+          revalidate: 5,
+        },
       }
-    })
+    );
     if (response.ok) {
-      products = await response.json()
+      products = await response.json();
     } else {
-      products = []
+      products = [];
     }
   } catch (e: any) {
-    console.log(e)
+    console.log(e);
     return redirect("/server-error");
   }
   return products;
@@ -44,20 +50,22 @@ export async function getProducts() {
 
 export async function getCategories() {
   let categories: any = [];
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}product/categories`, {
-      next: {
-        revalidate: 5
+
+  await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}product/categories`, {
+    next: {
+      revalidate: 5,
+    },
+  })
+    .then(function (response) {
+      if (response.ok) {
+        categories = response.json();
+      } else {
+        categories = [];
       }
     })
-    if (response.ok) {
-      categories = await response.json()
-    } else {
-      categories = []
-    }
-  } catch (e: any) {
-    console.log(e)
-    return redirect("/server-error");
-  }
+    .catch(function (error) {
+      console.log(error);
+      return redirect("/server-error");
+    });
   return categories;
 }
