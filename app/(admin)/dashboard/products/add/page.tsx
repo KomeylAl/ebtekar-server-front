@@ -18,8 +18,9 @@ const AddProduct = () => {
   const [title, setTitle]: any = useState("");
   const [slug, setSlug]: any = useState("");
   const [content, setContent]: any = useState("");
+  const [description, setDescription]: any = useState("");
   const [price, setPrice]: any = useState("");
-  const [file, setFile]: any = useState("");
+  const [files, setFiles]: any = useState<File[]>([]);
 
   const catsOptions: any = [];
 
@@ -30,6 +31,18 @@ const AddProduct = () => {
   const fetchData = async () => {
     const cats = await getProductCategory()
     setCats(cats)
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    if (files.length > 4) {
+      toast.error("حداکثر می‌توانید 4 تصویر انتخاب کنید.");
+      return;
+    }
+
+    setFiles(Array.from(files));
   };
 
   useEffect(() => {
@@ -51,15 +64,22 @@ const AddProduct = () => {
   }
 
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const formData = new FormData();
+
+    formData.append("title", title);
+    formData.append("slug", slug);
+    formData.append("body", content);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("product_categories_id", selectedCategory);
+    files.forEach((file: any, index: any) => {
+      formData.append(`images[${index}]`, file);
+    })
+
     setSendLoading(true);
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/add`, {
-      title,
-      slug,
-      description: content,
-      price,
-      product_categories_id: selectedCategory
-    }, {})
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/add`, formData)
     .then(function (response) {
       if (response.status === 201) {
         toast.success('محصول با موفقیت افزوده شد')
@@ -122,9 +142,17 @@ const AddProduct = () => {
                   multiple
                   max={4}
                   name="image"
+                  onChange={handleFileChange}
                   className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
                 />
               </div>
+            </div>
+            <div className="w-full">
+              <h2 className="text-xl mb-4">توضیحات کوتاه</h2>
+              <textarea name="description" id="desc"
+                onChange={(e: any) => setDescription(e.target.value)}
+                className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
+              ></textarea>
             </div>
             <div className="w-full">
               <h2 className="text-xl mb-4">محتوای محصول</h2>

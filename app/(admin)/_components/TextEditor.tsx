@@ -3,7 +3,7 @@ import "react-quill/dist/quill.snow.css";
 
 interface TextEditorProps {
    value: any,
-   onChange: any
+   onChange: any,
 }
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });

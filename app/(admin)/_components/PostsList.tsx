@@ -9,21 +9,21 @@ const PostsList = () => {
    const [posts, setPosts]: any = useState([]);
    const [loading, setLoading]: any = useState(false);
  
+   const fetchPosts = async () => {
+      setLoading(true)
+      await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}posts`)
+         .then(function (response) {
+           setPosts(response.data)
+         })
+         .catch(function (error) {
+            console.log(error.data)
+            toast.error('خطا در دریافت اطلاعات مطالب')
+         })
+         .finally(() => setLoading(false))
+   }
+
    useEffect(() => {
-    const fetchProducts = async () => {
-       setLoading(true)
-       await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}posts`)
-          .then(function (response) {
-            setPosts(response.data)
-          })
-          .catch(function (error) {
-             console.log(error.data)
-             toast.error('خطا در دریافت اطلاعات مطالب')
-          })
-          .finally(() => setLoading(false))
-    }
- 
-    fetchProducts()
+    fetchPosts()
    }, [])
  
    if (loading) {
@@ -37,7 +37,7 @@ const PostsList = () => {
    return (
     <div className="w-full flex flex-col gap-3">
        {posts.map((product: any) => (
-          <PostRow key={product.id} data={product} />
+          <PostRow key={product.id} data={product} onDelete={fetchPosts} />
        ))}
     </div>
    );

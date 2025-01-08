@@ -145,6 +145,7 @@ const Info = () => {
             <input
               type="file"
               name="image"
+              accept="image/png, image/jpeg, image/webp"
               onChange={handleFileChange}
               className="w-full bg-white rounded-md shadow-sm p-3"
             />

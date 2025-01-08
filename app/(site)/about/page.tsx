@@ -1,8 +1,6 @@
 import { mainPageAbout } from "@/actions/main-page-data";
 import AboutComp from "@/components/AboutComp";
 import Header from "@/components/Header";
-import axios from "axios";
-import { redirect } from "next/navigation";
 
 export default async function About() {
   

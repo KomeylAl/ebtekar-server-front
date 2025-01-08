@@ -32,7 +32,7 @@ export async function getProducts() {
       `${process.env.NEXT_PUBLIC_BACKEND_API_URL}products`,
       {
         next: {
-          revalidate: 5,
+          revalidate: 2,
         },
       }
     );

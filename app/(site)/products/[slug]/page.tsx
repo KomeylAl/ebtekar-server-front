@@ -19,10 +19,10 @@ export async function generateMetadata(
   { params }: ProductPageProps,
 ): Promise<Metadata> {
   const { slug } = params;
-  const post = await getProductData(slug);
-  const description = generateDescription(post.description);
+  const product = await getProductData(slug);
+  const description = generateDescription(product.meta_description);
   return {
-    title: `${post.title} - ابتکار صنعت اسپادانا`,
+    title: `${product.title} - ابتکار صنعت اسپادانا`,
     description: description,
   };
 }
@@ -48,7 +48,9 @@ export default async function Product({ params }: ProductPageProps) {
                 <FaFolder size={20} /> {product.category}
               </Link>
             </div>
-            <div dangerouslySetInnerHTML={{ __html: product.description }} />
+            <div
+              className="mt-4" 
+              dangerouslySetInnerHTML={{ __html: product.body }} />
             {/* <p>{product.description}</p> */}
           </div>
         </div>

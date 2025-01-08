@@ -3,7 +3,10 @@
 import { getPostCategory, getProductCategory } from "@/actions/get-category";
 import Header from "@/app/(admin)/_components/Header";
 import TextEditor from "@/app/(admin)/_components/TextEditor";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import ReactSelect from "react-select";
 
 const AddPost = () => {
@@ -17,7 +20,10 @@ const AddPost = () => {
   const [title, setTitle]: any = useState("");
   const [slug, setSlug]: any = useState("");
   const [content, setContent]: any = useState("");
+  const [description, setDescription] = useState("");
   const [file, setFile]: any = useState("");
+
+  const router = useRouter();
 
   const catsOptions: any = [];
   const relatedCatsOptions: any = [];
@@ -58,7 +64,38 @@ const AddPost = () => {
     });
   });
 
-  const handleSubmit = async () => {};
+  const handleFileChange = (e: any) => {
+    setFile(e.target.files[0]);
+    console.log(file)
+  }
+
+  const handleSubmit = async () => {
+
+    const newData = new FormData();
+    newData.append("title", title);
+    newData.append("slug", slug);
+    newData.append("body", content);
+    newData.append("description", description);
+    newData.append("category", selectedCategory);
+    newData.append("related_cat", selectedRelatedCat);
+    newData.append("image", file);
+
+    setSendLoading(true);
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}posts/add`, newData)
+    .then(function (response) {
+      if (response.status === 201) {
+        toast.success('مطلب با موفقیت افزوده شد')
+        router.push('/dashboard/posts')
+      } else {
+        toast.error('خطا در افزودن مطلب')
+      }
+    })
+    .catch(function (error) {
+      console.log(error)
+      toast.error('خطا در افزودن مطلب')
+    })
+    .finally(() => setSendLoading(false))
+  };
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -71,6 +108,7 @@ const AddPost = () => {
               <input
                 type="text"
                 name="title"
+                onChange={(e: any) => setTitle(e.target.value)}
                 className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
               />
             </div>
@@ -80,6 +118,7 @@ const AddPost = () => {
                 <input
                   type="text"
                   name="slug"
+                  onChange={(e: any) => setSlug(e.target.value)}
                   className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
                 />
               </div>
@@ -88,9 +127,18 @@ const AddPost = () => {
                 <input
                   type="file"
                   name="image"
+                  accept="image/png, image/jpeg, image/webp"
+                  onChange={handleFileChange}
                   className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
                 />
               </div>
+            </div>
+            <div className="w-full">
+              <h2 className="text-xl">توضیحات کوتاه</h2> 
+              <textarea name="description" id="desc"
+                onChange={(e: any) => setDescription(e.target.value)}
+                className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
+              ></textarea>
             </div>
             <div className="w-full">
               <h2 className="text-xl mb-4">محتوای مطلب</h2>
