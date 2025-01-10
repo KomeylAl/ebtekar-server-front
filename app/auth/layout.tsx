@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import '../globals.css'
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
   title: "ابتکار صنعت - ورود",
@@ -15,6 +16,7 @@ export default function AuthLayout({
       <html lang="en">
         <body className='bg-gray-100'>
           <div className='min-h-screen'>
+            <Toaster />
             <div className="-z-10 top-20 fixed right-20 bg-orange-500 filter blur-[120px] w-12 lg:w-64 h-64" />
             <div className="-z-10 top-80 fixed right-80 bg-blue-500 filter blur-[120px] w-12 lg:w-64 h-64" />
             {children}

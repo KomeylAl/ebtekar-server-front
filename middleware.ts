@@ -14,17 +14,17 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!token && request.nextUrl.pathname.startsWith("/admin")) {
+  if (!token && request.nextUrl.pathname.startsWith("/dashboard")) {
     console.log('Request Path:', request.nextUrl.pathname);
     console.log('Token:', token);
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  if (token && request.nextUrl.pathname.startsWith('/login')) {
+  if (token && request.nextUrl.pathname.startsWith('/auth/login')) {
     // هدایت کاربر به صفحه اصلی
     console.log('Request Path:', request.nextUrl.pathname);
     console.log('Token:', token);
-    return NextResponse.redirect(new URL('/admin', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   // اگر توکن وجود داشت، به مسیر درخواست شده دسترسی داده می‌شود
@@ -33,5 +33,5 @@ export function middleware(request: NextRequest) {
 
 // لیست مسیرهایی که می‌خواهید محافظت کنید
 export const config = {
-  matcher: ["/admin/:path*"], // یا هر مسیر دیگر که می‌خواهید محافظت شود
+  matcher: ["/dashboard/:path*", "/auth/login"], // یا هر مسیر دیگر که می‌خواهید محافظت شود
 };

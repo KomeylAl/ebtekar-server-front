@@ -6,6 +6,8 @@ import axios from "axios";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { BiPhone } from "react-icons/bi";
+import { BsWhatsapp } from "react-icons/bs";
 import { FaFolder } from "react-icons/fa";
 import { MdWatchLater } from "react-icons/md";
 
@@ -60,7 +62,13 @@ export default async function Product({ params }: ProductPageProps) {
             <p className="text-xl font-bold mt-4">{product.price}</p>
           </div>
           <div className="mt-4 bg-amber-500 rounded-md text-center p-4 text-white text-xl">
-            <Link href="/order">ثبت سفارش</Link>
+            <Link href="/order" className="flex items-center gap-2 justify-center flex-row-reverse">ثبت سفارش</Link>
+          </div>
+          <div className="mt-4 bg-blue-500 rounded-md text-center p-4 text-white text-xl">
+            <Link href="tel:09131373073" className="flex items-center gap-2 justify-center flex-row-reverse">تماس <BiPhone /></Link>
+          </div>
+          <div className="mt-4 bg-green-500 rounded-md text-center p-4 text-white text-xl">
+            <Link href="https://wa.me/+989131373073" target="_blank" className="flex items-center gap-2 justify-center flex-row-reverse">واتساپ <BsWhatsapp /></Link>
           </div>
         </div>
       </div>

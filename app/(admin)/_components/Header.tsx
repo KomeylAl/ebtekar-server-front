@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { IoMdPerson } from "react-icons/io";
 import { CgMenuRightAlt } from "react-icons/cg";
 import axios from "axios";
-import Link from "next/link";
 import { deleteCookie, getCookie } from "cookies-next";
 import { BiLogOut } from "react-icons/bi";
 import { useRouter } from "next/navigation";
@@ -25,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
   const handleLogOut = async () => {
     setIsLoading(true)
     try{
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}api/logout`, {}, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}logout`, {}, {
         headers: {
           'Accept' : 'application/json',
           'Content-Type' : 'application/json',
@@ -33,8 +32,9 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
         }
       });
       if (response.status === 200) {
+        console.log(response.data);
         deleteCookie('token');
-        router.push('/login');
+        router.push('/auth/login');
       }
     } catch (e: any) {
       setIsLoading(false)

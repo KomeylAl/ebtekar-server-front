@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from '../_components/Header'
 import ProductsList from '../_components/ProductsList'
+import Link from 'next/link'
 
 const Dashboard = () => {
   return (
@@ -11,7 +12,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-xl">آخرین محصولات</h2>
             <div className="px-12 py-2 bg-amber-600 rounded-md text-white text-center cursor-pointer">
-              افزودن محصول
+              <Link href='/dashboard/products/add'>افزودن محصول</Link>
             </div>
           </div>
           <div className="mt-12">

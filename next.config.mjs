@@ -4,10 +4,6 @@ const nextConfig = {
       remotePatterns: [
          {
             protocol: "https",
-            hostname: "www.cmcautomation.ir"
-         },
-         {
-            protocol: "https",
             hostname: "ebtekar.viona-graphy.ir"
          },
          {

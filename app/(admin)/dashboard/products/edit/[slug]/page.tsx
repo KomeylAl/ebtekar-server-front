@@ -9,6 +9,7 @@ import ReactSelect from "react-select";
 import DOMPurify from "dompurify";
 import axios from 'axios';
 import { getProductData } from '@/actions/products-data';
+import FileUploader from '@/app/(admin)/_components/ui/FileUploader';
 
 interface EditProductProps {
    params: {
@@ -23,13 +24,13 @@ const EditProduct = ({ params }: EditProductProps) => {
   const [product, setProduct]: any = useState({});
   const [cats, setCats] = useState([]);
   const [selectedCategory, setSelectedCategory]: any = useState();
-
-  const [title, setTitle]: any = useState("");
-  const [slug, setSlug]: any = useState("");
+  const [formData, setFormData]: any = useState({});
   const [content, setContent]: any = useState("");
-  const [description, setDescription]: any = useState("");
-  const [price, setPrice]: any = useState("");
-  const [files, setFiles]: any = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+
+  const handleFilesSelected = (files: File[]) => {
+    setUploadedImages(files);
+  };
 
   const catsOptions: any = [];
 
@@ -43,18 +44,13 @@ const EditProduct = ({ params }: EditProductProps) => {
     console.log(product)
     setCats(cats)
     setProduct(product)
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    if (files.length > 4) {
-      toast.error("حداکثر می‌توانید 4 تصویر انتخاب کنید.");
-      return;
-    }
-
-    setFiles(Array.from(files));
+    setFormData({
+      title: product.title,
+      description: product.meta_description,
+      slug: product.slug,
+      content: product.body,
+      price: product.price
+    })
   };
 
   const handleContentChange = (value: any) => {
@@ -90,24 +86,23 @@ const EditProduct = ({ params }: EditProductProps) => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const formData = new FormData();
+    const newForm = new FormData();
 
-    formData.append("title", title || product.title);
-    formData.append("slug", slug || product.slug);
-    formData.append("body", content || product.body);
-    formData.append("description", description || product.meta_description);
-    formData.append("price", price || product.price);
-    formData.append("product_categories_id", selectedCategory || product.product_categories_id);
-    files.forEach((file: any, index: any) => {
-      formData.append(`images[${index}]`, file);
+    newForm.append("title", formData.title);
+    newForm.append("slug", formData.slug);
+    newForm.append("body", formData.content);
+    newForm.append("description", formData.description);
+    newForm.append("price", formData.price);
+    newForm.append("product_categories_id", selectedCategory || product.product_categories_id);
+    uploadedImages.forEach((file: any, index: any) => {
+      newForm.append(`images[${index}]`, file);
     })
 
     setSendLoading(true);
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/${params.slug}/edit`, formData)
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}products/${params.slug}/edit`, newForm)
     .then(function (response) {
       if (response.status === 200) {
         toast.success('محصول با موفقیت ویرایش شد')
-        console.log(response.data)
       }
     })
     .catch(function (error) {
@@ -115,91 +110,84 @@ const EditProduct = ({ params }: EditProductProps) => {
     }).finally(() => setSendLoading(false))
   };
 
+  const handleInputChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       <Header pageTitle="ویرایش محصول" />
-      <div className="w-full flex flex-col p-8">
-        <div className="h-fit flex flex-col p-4">
-          <div className="mt-4 flex flex-col gap-10">
-            <div className="w-full">
-              <h2 className="text-xl">عنوان محصول</h2>
+      <div className="w-full flex justify-between gap-8 p-8">
+          <div className="w-full">
+            <h2 className='text-lg'>مشخصات محصول</h2>
+            <div className="w-full flex gap-4">
               <input
                 type="text"
                 name="title"
-                placeholder={product.title}
-                onChange={(e: any) => setTitle(e.target.value)}
+                placeholder='عنوان محصول'
+                value={formData.title}
+                onChange={handleInputChange}
                 className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
               />
-            </div>
-            <div className="w-full flex gap-4">
-              <div className="w-full">
-                <h2 className="text-xl">اسلاگ</h2>
-                <input
+              <input
                   type="text"
                   name="slug"
-                  placeholder={product.slug}
-                  onChange={(e: any) => setSlug(e.target.value)}
+                  placeholder='اسلاگ'
+                  value={formData.slug}
+                  onChange={handleInputChange}
                   className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
                 />
-              </div>
-              <div className="w-full">
-                <h2 className="text-xl">تصاویر محصول</h2>
-                <input
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp"
-                  multiple
-                  max={4}
-                  name="image"
-                  onChange={handleFileChange}
-                  className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
-                />
-              </div>
             </div>
-            <div className="w-full">
-              <h2 className="text-xl mb-4">توضیحات کوتاه</h2>
+            <div className="w-full mt-6">
+              <p className='text-[13px] text-gray-700 text-justify'>توضیحات کوتاه محصول برای توضیحات متای سئو استفاده میشود. سعی کنید چند خط کوتاه درباره محصول توضیح دهید تا خوانندگان از گوگل بتوانند بفهمند محصول شما چیست. همچنین از عبارات درست استفاده کنید تا گوگل به درستی متوجه منظور شما شده و بهترین عملکرد را برای شما داشته باشد.</p>
               <textarea name="description" id="desc"
-                placeholder={product.meta_description}
-                onChange={(e: any) => setDescription(e.target.value)}
+                value={formData.description}
+                placeholder='توضیحات کوتاه'
+                onChange={handleInputChange}
                 className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
               ></textarea>
             </div>
-            <div className="w-full">
-              <h2 className="text-xl mb-4">محتوای محصول</h2>
+            <div className="w-full mt-6">
               <TextEditor value={content} onChange={handleContentChange} />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-full">
+          </div>
+          <div className='w-72 bg-gray-700/5 rounded-md p-8'>
+            <h3>انتشار محصول</h3>
+            <p className='text-[11px] text-gray-700 text-justify mt-3'>لطفا توجه کنید قبل از انتشار محصول همه اطلاعات را به درستی وارد کرده باشید. هر زمان بخواهید میتوانید دوبراه محصول را ویرایش کنید.</p>
+            <button
+              onClick={handleSubmit}
+              className={`w-full py-2 text-white rounded-md mt-5
+                  ${sendLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600'}
+                `}
+            >{sendLoading ? 'در حال ارسال...' : 'ویرایش محصول'}</button>
+            <div className='w-full mt-6'>
                 <label>انتخاب دسته بندی</label>
                 <ReactSelect
-                  className="mt-3 focus:ring-black focus:border-black"
+                  className="mt-3 focus:ring-black focus:border-black text-sm"
                   placeholder="انتخاب دسته بندی"
                   defaultInputValue={selectedCategory}
                   onChange={handleCategoryChange}
                   options={catsOptions}
                 />
-              </div>
-              <div className="w-full">
-                <h2 className="text-xl">قیمت</h2>
+            </div>
+            <div className="w-full mt-6">
+                <h2 className="">قیمت</h2>
                 <input
                   type="text"
                   name="price"
-                  placeholder={product.price}
-                  onChange={(e: any) => setPrice(e.target.value)}
-                  className="w-full mt-3 bg-white rounded-md shadow-sm p-3"
+                  value={formData.price}
+                  placeholder='قیمت'
+                  onChange={handleInputChange}
+                  className="w-full mt-3 bg-transparent border border-gray-400 text-[13px] rounded-md shadow-sm p-2"
                 />
               </div>
-            </div>
-            <button
-              onClick={handleSubmit}
-              className={`bg-amber-600 px-8 py-2 w-72 rounded-md text-white text-lg
-              ${sendLoading ? "cursor-not-allowed bg-amber-300" : ""}
-            `}
-            >
-              ویرایش محصول
-            </button>
+              <div className="w-full mt-6 flex flex-col items-start">
+                <h2 className="mb-3">تصاویر محصول</h2>
+                <FileUploader onFilesSelected={handleFilesSelected} images={product.images || []} />
+              </div>
           </div>
         </div>
-      </div>
     </div>
   )
 }

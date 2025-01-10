@@ -4,6 +4,7 @@ import axios from "axios";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 const Login = () => {
 
@@ -17,7 +18,7 @@ const Login = () => {
   const handleSubmit = async () => {
     try{
       setIsLoading(true);
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}api/login`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}login`, {
         'phone' : phone,
         'password' : password,
         headers : {
@@ -27,7 +28,8 @@ const Login = () => {
       });
       if (response.status === 200) {
         setCookie('token', response.data.access_token, { maxAge: 7200 });
-        router.push('/');
+        toast.success('وارد شدید لطفا کمی صبر کنید');
+        router.push('/dashboard');
         setIsLoading(false);
       } 
       console.log(response.status)
