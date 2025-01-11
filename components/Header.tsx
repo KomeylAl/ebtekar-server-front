@@ -16,7 +16,7 @@ const Header = ({ title }: HeaderProps) => {
          <Nav />
        </div>
        <div className="flex flex-col w-full h-full items-center justify-center gap-4">
-         <h1 className="text-3xl text-white font-bold text-right">
+         <h1 className="text-xl md:text-3xl text-white font-bold text-right">
            {title}
          </h1>
        </div>

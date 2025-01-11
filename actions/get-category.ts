@@ -33,10 +33,23 @@ export async function getProductCategory() {
   return category;
 }
 
-export default async function getCategory(id: number) {
+export default async function getCategory(id: string) {
   let category: any;
   await axios
-    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/post/categories/${id}`)
+    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}post/categories/${id}`)
+    .then(function (response) {
+      category = response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return category;
+}
+
+export async function getProductCat(id: string) {
+  let category: any;
+  await axios
+    .get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}product/categories/${id}`)
     .then(function (response) {
       category = response.data;
     })

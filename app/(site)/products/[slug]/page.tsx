@@ -38,7 +38,7 @@ export default async function Product({ params }: ProductPageProps) {
   return (
     <div className="py-8 flex flex-col">
       <Header title={product.title} />
-      <div className="flex flex-col xl:flex-row justify-between mt-9 gap-6">
+      <div className="flex flex-col-reverse xl:flex-row justify-between mt-9 gap-6">
         <div className="flex flex-col w-full xl:w-[70%] rounded-xl">
           <ProductGallery images={product.images} />
           <div className="w-full p-8 bg-white bg-opacity-70 mt-9 rounded-xl">

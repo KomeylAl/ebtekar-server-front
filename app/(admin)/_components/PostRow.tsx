@@ -21,7 +21,7 @@ const PostRow = ({ data, onDelete }: PostRowProps) => {
 
   const handleDelete = async () => {
     setDeleting(true)
-    await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}posts/${data.id}/delete`)
+    await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}post/${data.id}/delete`)
     .then(function (response) {
       if (response.status === 200) {
         toast.success('مطلب با موفقت حذف شد')

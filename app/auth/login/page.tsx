@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import axios from "axios";
 import { setCookie } from "cookies-next";
@@ -7,44 +7,41 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const Login = () => {
-
   const [isLoading, setIsLoading] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
 
   const router = useRouter();
 
   const handleSubmit = async () => {
-    try{
-      setIsLoading(true);
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}login`, {
-        'phone' : phone,
-        'password' : password,
-        headers : {
-          'Accept' : 'application/json',
-          'Content-type' : 'application/json'
+    setIsLoading(true);
+    await axios
+      .post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}login`, {
+        phone: phone,
+        password: password,
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json",
+        },
+      })
+      .then(function (response) {
+        if (response.status === 200) {
+          setCookie("token", response.data.access_token, { maxAge: 7200 });
+          toast.success("وارد شدید لطفا کمی صبر کنید");
+          router.push("/dashboard");
         }
-      });
-      if (response.status === 200) {
-        setCookie('token', response.data.access_token, { maxAge: 7200 });
-        toast.success('وارد شدید لطفا کمی صبر کنید');
-        router.push('/dashboard');
-        setIsLoading(false);
-      } 
-      console.log(response.status)
-      if (response.status === 401) {
-        setIsLoading(false);
-        setError('نام کاربری یا رمز عبور اشتباه است');
-        console.log('error');
-      }
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (e: any) {
-      setIsLoading(false);
-      setError(e.response.data.error);
-      console.log(e.toString());
-    }
-  }
+        console.log(response.status);
+        if (response.status === 401) {
+          console.log("error");
+          toast.error("نام کاربری یا رمز عبور اشتباه است");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        toast.error("خطا در برقراری ارتباط با سرور");
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   return (
     <div className="w-dvw h-dvh flex justify-center items-center ">
@@ -71,18 +68,16 @@ const Login = () => {
               />
             </div>
           </div>
-          <div className='h-16 mt-3'>
-            <p className='text-rose-600'>
-            {error}
-            </p>
-          </div>
           <div
-          onClick={handleSubmit}
-            className={
-              `w-44 p-2 rounded-md text-center text-white
-               ${isLoading ? 'bg-sky-300 cursor-not-allowed' : 'bg-sky-600 cursor-pointer'}
-              `
-            }>
+            onClick={handleSubmit}
+            className={`w-44 p-2 rounded-md text-center text-white mt-8
+               ${
+                 isLoading
+                   ? "bg-sky-300 cursor-not-allowed"
+                   : "bg-sky-600 cursor-pointer"
+               }
+              `}
+          >
             ورود
           </div>
         </div>

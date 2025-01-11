@@ -22,8 +22,20 @@ import { MdDashboard } from 'react-icons/md';
       icon: <GrProductHunt />,
     },
     {
+      title: "دسته بندی محصولات",
+      link: "/dashboard/products/categories",
+      access: "admin",
+      icon: <GrProductHunt />,
+    },
+    {
       title: "مقالات",
       link: "/dashboard/posts",
+      access: "admin",
+      icon: <FiList />,
+    },
+    {
+      title: "دسته بندی مقالات",
+      link: "/dashboard/posts/categories",
       access: "admin",
       icon: <FiList />,
     },
