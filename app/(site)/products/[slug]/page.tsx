@@ -51,7 +51,7 @@ export default async function Product({ params }: ProductPageProps) {
               </Link>
             </div>
             <div
-              className="mt-4" 
+              className="mt-4 text-justify" 
               dangerouslySetInnerHTML={{ __html: product.body }} />
             {/* <p>{product.description}</p> */}
           </div>

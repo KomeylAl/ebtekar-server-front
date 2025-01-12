@@ -17,7 +17,7 @@ const PostItem = ({ data }: PostItemProps) => {
     return text;
   }
 
-  const previewDesc = previewText(data.body, 150)
+  const previewDesc = previewText(data.meta_description, 150)
 
   return (
     <div className="bg-white relative rounded-tl-[50px] rounded-br-[50px] hover:shadow-md transition-all duration-400">

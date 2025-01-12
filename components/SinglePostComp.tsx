@@ -35,9 +35,12 @@ const SinglePostComp = ({ data, products }: SinglePostCompProps) => {
                <FaFolder size={20} /> {data.category}
             </Link>
          </div>
-         <p className='text-justify mt-4'>
-            {data.body}
-         </p>
+         <div 
+            className='text-justify mt-4'
+            dangerouslySetInnerHTML={{ __html: data.body }}
+         >
+            {/* {data.body} */}
+         </div>
       </div>
       <div className='mt-20 w-full'>
          <p className='text-xl'>محصولات مرتبط</p>
