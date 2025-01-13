@@ -27,7 +27,7 @@ const PostItem = ({ data }: PostItemProps) => {
           width={300}
           height={140}
           alt={data.title}
-          className="w-full object-cover rounded-tl-[50px] rounded-br-[50px]"
+          className="w-full h-44 object-cover rounded-tl-[50px] rounded-br-[50px]"
         />
       </Link>
       <div className="p-4">

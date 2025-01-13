@@ -24,7 +24,7 @@ export async function generateMetadata(
 
 export default async function Post({ params }: PostPageProps) {
   const post = await getSinglePost(params.slug);
-  const relatedProducts = await getRelatedProducts(post.related_cats);
+  const relatedProducts = await getRelatedProducts(post.related_cat);
 
   return (
     <div className="py-8">

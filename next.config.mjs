@@ -7,6 +7,10 @@ const nextConfig = {
             hostname: "ebtekar.viona-graphy.ir"
          },
          {
+            protocol: "https",
+            hostname: "api.ese-co.ir"
+         },
+         {
             protocol: "http",
             hostname: "127.0.0.1"
          }
