@@ -7,12 +7,6 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-export const metadata: Metadata = {
-  title: "ثبت سفارش - ابتکار صنعت اسپادانا",
-  description:
-    "شرکت ماشین سازی ابتکار صنعت اسپادانا با سال‌ها تجربه در طراحی و ساخت ماشین‌آلات صنعتی، به عنوان یکی از پیشگامان این حوزه در ایران شناخته می‌شود. این شرکت با تکیه بر دانش فنی متخصصان داخلی و بهره‌گیری از فناوری‌های روز دنیا، محصولات متنوع و باکیفیتی را برای صنایع مختلف ارائه می‌دهد.",
-};
-
 const Order = () => {
   const [name, setName]: any = useState("");
   const [phone, setPhone]: any = useState("");
@@ -95,9 +89,9 @@ const Order = () => {
           <button
             onClick={sendData}
             disabled={loading}
-            className="px-8 py-4 bg-amber-500 text-white rounded-md text-xl mt-4"
+            className={`px-8 py-4 bg-amber-500 text-white rounded-md text-xl mt-4 ${loading ? 'bg-amber-300' : 'bg-amber-500'}`}
           >
-            ثبت سفارش
+            {loading ? 'در حال ارسال' : 'ثبت سفارش'}
           </button>
         </div>
         <div className="mt-8">
