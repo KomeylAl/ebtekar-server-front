@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://ese-co.ir
+
+# Sitemaps
+Sitemap: https://ese-co.ir/sitemap.xml
