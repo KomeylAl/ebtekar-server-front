@@ -47,6 +47,7 @@ const Info = () => {
 
   const handleFileChange = (e: any) => {
     setFile(e.target.files[0]);
+    console.log(file);
   };
 
   const handleSubmit = async () => {

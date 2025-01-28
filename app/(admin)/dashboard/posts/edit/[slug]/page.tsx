@@ -1,35 +1,94 @@
 "use client";
 
 import { getPostCategory, getProductCategory } from "@/actions/get-category";
+import { getSinglePost } from "@/actions/posts-data";
 import Header from "@/app/(admin)/_components/Header";
 import TextEditor from "@/app/(admin)/_components/TextEditor";
 import FileUploader from "@/app/(admin)/_components/ui/FileUploader";
 import axios from "axios";
+import DOMPurify from "dompurify";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import DOMPurify from "dompurify";
 import toast from "react-hot-toast";
 import ReactSelect from "react-select";
+import { PuffLoader } from "react-spinners";
 
-const AddPost = () => {
+interface EditPostProps {
+  params: {
+    slug: string;
+  };
+}
+
+const EditPost = ({ params }: EditPostProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [sendLoading, setSendLoading]: any = useState(false);
 
   const [cats, setCats]: any = useState([]);
   const [relatedCats, setRelatedCats]: any = useState([]);
   const [selectedCategory, setSelectedCategory]: any = useState();
   const [selectedRelatedCat, setSelectedRelatedCat]: any = useState();
+  const [file, setFile]: any = useState(null);
+  const [content, setContent] = useState("");
 
-  const [title, setTitle]: any = useState("");
-  const [slug, setSlug]: any = useState("");
-  const [content, setContent]: any = useState("");
-  const [description, setDescription] = useState("");
+  const router = useRouter();
+
+  const catsOptions: any = [];
+  const relatedCatsOptions: any = [];
+
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
     content: "",
     description: "",
   });
-  const [file, setFile]: any = useState("");
+  const [post, setPost]: any = useState({});
+
+  const handleCategoryChange = (selectedOption: any) => {
+    setSelectedCategory(selectedOption.value);
+  };
+
+  const handleRelatedCategoryChange = (selectedOption: any) => {
+    setSelectedRelatedCat(selectedOption.value);
+  };
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    let categories: any;
+    categories = await getPostCategory();
+    setCats(categories);
+
+    let relatedCats: any;
+    relatedCats = await getProductCategory();
+    setRelatedCats(relatedCats);
+
+    const post = await getSinglePost(params.slug);
+    setFormData({
+      title: post.title,
+      slug: post.slug,
+      content: post.body,
+      description: post.meta_description,
+    });
+    setPost(post);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  cats.map((cat: any) => {
+    catsOptions.push({
+      value: cat.id,
+      label: cat.title,
+    });
+  });
+
+  relatedCats.map((cat: any) => {
+    relatedCatsOptions.push({
+      value: cat.id,
+      label: cat.title,
+    });
+  });
 
   const handleContentChange = (value: any) => {
     const sanitizedContent = DOMPurify.sanitize(value, {
@@ -53,88 +112,64 @@ const AddPost = () => {
       /background-color\s*:\s*[^;]+;?/g,
       ""
     );
-  
+
     setContent(noBackgroundContent);
     setFormData((prev: any) => ({ ...prev, content: noBackgroundContent }));
   };
 
-  const router = useRouter();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const newForm = new FormData();
 
-  const catsOptions: any = [];
-  const relatedCatsOptions: any = [];
+    newForm.append("title", formData.title);
+    newForm.append("slug", formData.slug);
+    newForm.append("body", formData.content);
+    newForm.append("description", formData.description);
+    newForm.append("category", selectedCategory || post.post_categories_id);
+    newForm.append(
+      "related_cat",
+      selectedRelatedCat || post.product_categories_id
+    );
+    newForm.append("image", file);
 
-  const handleCategoryChange = (selectedOption: any) => {
-    setSelectedCategory(selectedOption.value);
-  };
-
-  const handleRelatedCategoryChange = (selectedOption: any) => {
-    setSelectedRelatedCat(selectedOption.value);
-  };
-
-  const fetchData = async () => {
-    let categories: any;
-    categories = await getPostCategory();
-    setCats(categories);
-
-    let relatedCats: any;
-    relatedCats = await getProductCategory();
-    setRelatedCats(relatedCats);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  cats.map((cat: any) => {
-    catsOptions.push({
-      value: cat.id,
-      label: cat.title,
-    });
-  });
-
-  relatedCats.map((cat: any) => {
-    relatedCatsOptions.push({
-      value: cat.id,
-      label: cat.title,
-    });
-  });
-
-  const handleFileChange = (e: any) => {
-    setFile(e.target.files[0]);
-    console.log(file)
-  }
-
-  const handleSubmit = async () => {
-
-    const newData = new FormData();
-    newData.append("title", formData.title);
-    newData.append("slug", formData.slug);
-    newData.append("body", formData.content);
-    newData.append("description", formData.description);
-    newData.append("category", selectedCategory);
-    newData.append("related_cat", selectedRelatedCat);
-    newData.append("image", file);
+    console.log(newForm);
 
     setSendLoading(true);
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}posts/add`, newData)
-    .then(function (response) {
-      if (response.status === 201) {
-        toast.success('مطلب با موفقیت افزوده شد')
-        router.push('/dashboard/posts')
-      } else {
-        toast.error('خطا در افزودن مطلب')
-      }
-    })
-    .catch(function (error) {
-      console.log(error)
-      toast.error('خطا در افزودن مطلب')
-    })
-    .finally(() => setSendLoading(false))
+    await axios
+      .post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}posts/${params.slug}/edit`,
+        newForm
+      )
+      .then(function (response) {
+        if (response.status === 200) {
+          toast.success("مطلب با موفقیت ویرایش شد");
+          router.push("/dashboard/posts");
+        } else {
+          console.log(response.data);
+          toast.error("خطا در ویرایش مطلب");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        toast.error("خطا در ویرایش مطلب");
+      })
+      .finally(() => setSendLoading(false));
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        <Header pageTitle="ویرایش مطلب" />
+        <div className="w-full h-screen flex items-center justify-center">
+          <PuffLoader color="#03a9fc" size={80} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
-      <Header pageTitle="افزودن مطلب" />
+      <Header pageTitle="ویرایش مطلب" />
       <div className="w-full flex justify-between gap-8 p-8">
         <div className="w-full">
           <h2 className="text-lg">مشخصات مطلب</h2>
@@ -193,7 +228,7 @@ const AddPost = () => {
           </div>
         </div>
         <div className="w-72 bg-gray-700/5 rounded-md p-8">
-          <h3>افزودن مطلب</h3>
+          <h3>ویرایش مطلب</h3>
           <p className="text-[11px] text-gray-700 text-justify mt-3">
             لطفا توجه کنید قبل از انتشار مطلب همه اطلاعات را به درستی وارد کرده
             باشید. هر زمان بخواهید میتوانید دوبراه مطلب را ویرایش کنید.
@@ -208,7 +243,7 @@ const AddPost = () => {
                   }
                 `}
           >
-            {sendLoading ? "در حال ارسال..." : "افزودن مطلب"}
+            {sendLoading ? "در حال ارسال..." : "ویرایش مطلب"}
           </button>
           <div className="w-full mt-6">
             <label>انتخاب دسته بندی</label>
@@ -227,14 +262,14 @@ const AddPost = () => {
               placeholder="دسته بندی محصولات مرتبط"
               defaultInputValue={selectedCategory}
               onChange={handleRelatedCategoryChange}
-              options={relatedCatsOptions}
+              options={catsOptions}
             />
           </div>
           <div className="w-full mt-6">
             <h2 className="mb-3">تصویر مطلب</h2>
             <FileUploader
               onFilesSelected={(file: any) => setFile(file[0])}
-              images={[]}
+              images={[{ img_path: post.img_path }]}
               allowMultiple={false}
             />
           </div>
@@ -244,4 +279,4 @@ const AddPost = () => {
   );
 };
 
-export default AddPost;
+export default EditPost;

@@ -36,7 +36,7 @@ const PostsList = () => {
  
    return (
     <div className="w-full flex flex-col gap-3">
-       {posts.map((product: any) => (
+       {posts.map((product: any, index: number) => (
           <PostRow key={product.id} data={product} onDelete={fetchPosts} />
        ))}
     </div>

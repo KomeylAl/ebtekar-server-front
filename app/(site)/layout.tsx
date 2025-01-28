@@ -27,17 +27,17 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-100 lg:pl-12 px-8 relative">
-          <div className="h-full">
+        <div className="h-full">
           <div className="-z-10 top-20 fixed right-20 bg-orange-500 filter blur-[120px] w-12 lg:w-64 h-64" />
           <div className="-z-10 top-80 fixed right-80 bg-blue-500 filter blur-[120px] w-12 lg:w-64 h-64" />
           <SideBar />
           <MobileNav />
           <div className="lg:pr-24">
             <Toaster />
-              {children}
+            {children}
             <Footer />
           </div>
-          </div>
+        </div>
       </body>
     </html>
   );

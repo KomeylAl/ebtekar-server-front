@@ -90,7 +90,7 @@ const EditProduct = ({ params }: EditProductProps) => {
 
     newForm.append("title", formData.title);
     newForm.append("slug", formData.slug);
-    newForm.append("body", formData.content);
+    newForm.append("body", content);
     newForm.append("description", formData.description);
     newForm.append("price", formData.price);
     newForm.append("product_categories_id", selectedCategory || product.product_categories_id);
@@ -149,7 +149,7 @@ const EditProduct = ({ params }: EditProductProps) => {
               ></textarea>
             </div>
             <div className="w-full mt-6">
-              <TextEditor value={content} onChange={handleContentChange} />
+              <TextEditor value={formData.content} onChange={handleContentChange} />
             </div>
           </div>
           <div className='w-72 bg-gray-700/5 rounded-md p-8'>
