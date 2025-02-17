@@ -3,7 +3,7 @@ import logo from '@/app/images/logo.png'
 import { BiEnvelope, BiMap, BiPhone } from "react-icons/bi";
 import Image from "next/image";
 import back from '@/app/images/hero.jpg'
-import { footerData } from "@/actions/footer-data";
+import { footerData } from "@/actions/main-page-data";
 
 export default async function Footer() {
 

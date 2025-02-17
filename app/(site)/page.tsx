@@ -1,7 +1,7 @@
-import { commentsData } from "@/actions/comments-data";
 import {
   heroData,
   mainPageAbout,
+  mainPageComments,
   mainPagePostsData,
   mainPageProductsData,
 } from "@/actions/main-page-data";
@@ -28,7 +28,7 @@ export default async function Home() {
 
   const hero = await heroData();
 
-  const comments = await commentsData();
+  const comments = await mainPageComments();
 
   return (
     <div className="w-full h-fit flex flex-col py-8">
